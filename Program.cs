@@ -6,10 +6,10 @@ namespace Banico
     {
         static void Main(string[] args)
         {
-            string country = "assets/countryinfo.txt";
-            string admin1 = "assets/admin1CodesASCII.txt";
-            string admin2 = "admin2Codes.txt";   
-            GeoFileProcessor geoFileProcessor = new GeoFileProcessor(country, admin1, admin2);
+            string countryFilename = "assets/countryinfo.txt";
+            string admin1Filename = "assets/admin1CodesASCII.txt";
+            string admin2Filename = "assets/admin2Codes.txt";   
+            GeoFileProcessor geoFileProcessor = new GeoFileProcessor(countryFilename, admin1Filename, admin2Filename);
         }
     }
 }

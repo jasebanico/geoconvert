@@ -7,6 +7,12 @@ namespace Banico
         public string Name { get; set; }
         public string Alias { get; set; }
 
-        public List<Admin2> Admin2s { get; set; }
+        public Dictionary<string, Admin2> Admin2s { get; set; }
+
+        public Admin1()
+        {
+            this.Admin2s = new Dictionary<string, Admin2>();
+        }
+
     }
 }
