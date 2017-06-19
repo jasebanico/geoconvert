@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Banico
 {
@@ -81,9 +82,32 @@ namespace Banico
                         {
                             Admin1 admin1 = country.Admin1s[admin1Alias];
                             admin1.Admin2s.Add(admin2Alias, admin2);
-                            Console.WriteLine(country.Name + "," + country.Alias + "," + admin1.Name + "," + admin1.Alias + "," + admin2.Name + "," + admin2.Alias);
                         }
                     }
+                }
+            }
+        }
+
+        public void WriteOutput(string outputFile)
+        {
+            FileStream fileStream = new FileStream(outputFile, FileMode.CreateNew);
+            using (StreamWriter writer = new StreamWriter(fileStream))
+            {
+                foreach (Country country in this.Countries.Values.OrderBy(c => c.Name))
+                {
+                    foreach (Admin1 admin1 in country.Admin1s.Values.OrderBy(a1 => a1.Name))
+                    {
+                        foreach (Admin2 admin2 in admin1.Admin2s.Values.OrderBy(a2 => a2.Name))
+                        {
+                            writer.WriteLine(country.Name + "," +
+                                country.Alias + "," +
+                                admin1.Name + "," +
+                                admin1.Alias + "," +
+                                admin2.Name + "," +
+                                admin2.Alias);
+                        }
+                    }
+
                 }
             }
         }
