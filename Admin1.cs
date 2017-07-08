@@ -7,6 +7,8 @@ namespace Banico
         public string Name { get; set; }
         public string Alias { get; set; }
 
+        public string Code { get; set; }
+
         public Dictionary<string, Admin2> Admin2s { get; set; }
 
         public Admin1()

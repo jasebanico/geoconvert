@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Banico
 {
@@ -28,11 +29,25 @@ namespace Banico
                         string[] split = line.Split('\t');
                         Country country = new Country();
                         country.Name = split[4];
-                        country.Alias = split[0];
-                        this.Countries.Add(country.Alias, country);
+                        country.Code = split[0];
+                        country.Alias = this.ToAlias(country.Name);
+                        this.Countries.Add(country.Code, country);
                     }
                 }
             }
+        }
+
+        private string ToAlias(string name)
+        {
+            string output = name;
+            output = output.ToLower();
+            output = output.Replace(" ", "_");
+            //output = output.Replace("-", "_");
+            output = output.Replace("/", "_");
+            Regex rgx = new Regex("[^a-zA-Z0-9 _-]");
+            output = rgx.Replace(output, "");
+
+            return output;
         }
 
         private void ReadAdmin1File(string admin1Filename)
@@ -47,13 +62,16 @@ namespace Banico
                     {
                         string[] split = line.Split('\t');
                         Admin1 admin1 = new Admin1();
-                        string admin1Code = split[0];
-                        string countryAlias = admin1Code.Split('.')[0];
-                        string admin1Alias = admin1Code.Split('.')[1];
-                        admin1.Name = split[1];
-                        admin1.Alias = admin1Alias;
-                        Country country = this.Countries[countryAlias];
-                        country.Admin1s.Add(admin1.Alias, admin1);
+                        string admin1Id = split[0];
+                        string countryCode = admin1Id.Split('.')[0];
+                        string admin1Code= admin1Id.Split('.')[1];
+                        admin1.Name = split[2];
+                        admin1.Code = admin1Code;
+                        admin1.Alias = this.ToAlias(admin1.Name);
+                        if (this.Countries.ContainsKey(countryCode)) {
+                            Country country = this.Countries[countryCode];
+                            country.Admin1s.Add(admin1.Code, admin1);
+                        }
                     }
                 }
             }
@@ -71,43 +89,48 @@ namespace Banico
                     {
                         string[] split = line.Split('\t');
                         Admin2 admin2 = new Admin2();
-                        string admin2Code = split[0];
-                        string countryAlias = admin2Code.Split('.')[0];
-                        string admin1Alias = admin2Code.Split('.')[1];
-                        string admin2Alias = admin2Code.Split('.')[2];
-                        admin2.Name = split[1];
-                        admin2.Alias = admin2Alias;
-                        Country country = this.Countries[countryAlias];
-                        if (country.Admin1s.ContainsKey(admin1Alias))
-                        {
-                            Admin1 admin1 = country.Admin1s[admin1Alias];
-                            admin1.Admin2s.Add(admin2Alias, admin2);
+                        string admin2Id = split[0];
+                        string countryCode = admin2Id.Split('.')[0];
+                        string admin1Code = admin2Id.Split('.')[1];
+                        string admin2Code = admin2Id.Split('.')[2];
+                        admin2.Name = split[2];
+                        admin2.Code = admin2Code;
+                        admin2.Alias = this.ToAlias(admin2.Name);
+                        if (this.Countries.ContainsKey(countryCode)) {
+                        Country country = this.Countries[countryCode];
+                            if (country.Admin1s.ContainsKey(admin1Code))
+                            {
+                                Admin1 admin1 = country.Admin1s[admin1Code];
+                                admin1.Admin2s.Add(admin2Code, admin2);
+                            }
+
                         }
                     }
                 }
             }
         }
 
-        public void WriteOutput(string outputFile)
+        public void WriteOutput(string countryFilter, string outputFile)
         {
             FileStream fileStream = new FileStream(outputFile, FileMode.CreateNew);
             using (StreamWriter writer = new StreamWriter(fileStream))
             {
                 foreach (Country country in this.Countries.Values.OrderBy(c => c.Name))
                 {
-                    foreach (Admin1 admin1 in country.Admin1s.Values.OrderBy(a1 => a1.Name))
-                    {
-                        foreach (Admin2 admin2 in admin1.Admin2s.Values.OrderBy(a2 => a2.Name))
+                    if ((country.Name == countryFilter) || (string.IsNullOrEmpty(countryFilter))) {
+                        foreach (Admin1 admin1 in country.Admin1s.Values.OrderBy(a1 => a1.Name))
                         {
-                            writer.WriteLine(country.Name + "," +
-                                country.Alias + "," +
-                                admin1.Name + "," +
-                                admin1.Alias + "," +
-                                admin2.Name + "," +
-                                admin2.Alias);
+                            foreach (Admin2 admin2 in admin1.Admin2s.Values.OrderBy(a2 => a2.Name))
+                            {
+                                writer.WriteLine(country.Name + "," +
+                                    country.Alias + "," +
+                                    admin1.Name + "," +
+                                    admin1.Alias + "," +
+                                    admin2.Name + "," +
+                                    admin2.Alias);
+                            }
                         }
                     }
-
                 }
             }
         }

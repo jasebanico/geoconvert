@@ -7,5 +7,7 @@ namespace Banico
         public string Name { get; set; }
         public string Alias { get; set; }
 
+        public string Code { get; set; }
+
     }
 }
