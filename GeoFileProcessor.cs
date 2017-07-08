@@ -8,9 +8,18 @@ namespace Banico
 {
     public class GeoFileProcessor
     {
+        public Dictionary<string, string> Continent = new Dictionary<string, string>();
         public Dictionary<string, Country> Countries = new Dictionary<string, Country>();
         public GeoFileProcessor(string countryFilename, string admin1Filename, string admin2Filename)
         {
+            this.Continent.Add("AF", "Africa");
+            this.Continent.Add("AS", "Asia");
+            this.Continent.Add("EU", "Europe");
+            this.Continent.Add("NA", "North America");
+            this.Continent.Add("OC", "Oceania");
+            this.Continent.Add("SA", "South America");
+            this.Continent.Add("AN", "Antartica");
+
             this.ReadCountryFile(countryFilename);
             this.ReadAdmin1File(admin1Filename);
             this.ReadAdmin2File(admin2Filename);
@@ -28,6 +37,8 @@ namespace Banico
                     {
                         string[] split = line.Split('\t');
                         Country country = new Country();
+                        string continent = split[8];
+                        country.Continent = this.Continent[continent];
                         country.Name = split[4];
                         country.Code = split[0];
                         country.Alias = this.ToAlias(country.Name);
@@ -122,7 +133,9 @@ namespace Banico
                         {
                             foreach (Admin2 admin2 in admin1.Admin2s.Values.OrderBy(a2 => a2.Name))
                             {
-                                writer.WriteLine(country.Name + "," +
+                                writer.WriteLine(country.Continent + "," +
+                                    this.ToAlias(country.Continent) + "," +
+                                    country.Name + "," +
                                     country.Alias + "," +
                                     admin1.Name + "," +
                                     admin1.Alias + "," +

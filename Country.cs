@@ -4,6 +4,7 @@ namespace Banico
 {
     public class Country
     {
+        public string Continent { get; set; }
         public string Name { get; set; }
         public string Alias { get; set; }
 
