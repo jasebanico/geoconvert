@@ -76,9 +76,9 @@ namespace Banico
                         string admin1Id = split[0];
                         string countryCode = admin1Id.Split('.')[0];
                         string admin1Code= admin1Id.Split('.')[1];
-                        admin1.Name = split[2];
+                        admin1.Name = split[1];
                         admin1.Code = admin1Code;
-                        admin1.Alias = this.ToAlias(admin1.Name);
+                        admin1.Alias = this.ToAlias(split[2]);
                         if (this.Countries.ContainsKey(countryCode)) {
                             Country country = this.Countries[countryCode];
                             country.Admin1s.Add(admin1.Code, admin1);
@@ -104,9 +104,9 @@ namespace Banico
                         string countryCode = admin2Id.Split('.')[0];
                         string admin1Code = admin2Id.Split('.')[1];
                         string admin2Code = admin2Id.Split('.')[2];
-                        admin2.Name = split[2];
+                        admin2.Name = split[1];
                         admin2.Code = admin2Code;
-                        admin2.Alias = this.ToAlias(admin2.Name);
+                        admin2.Alias = this.ToAlias(split[2]);
                         if (this.Countries.ContainsKey(countryCode)) {
                         Country country = this.Countries[countryCode];
                             if (country.Admin1s.ContainsKey(admin1Code))
