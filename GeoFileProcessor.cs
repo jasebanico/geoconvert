@@ -52,10 +52,10 @@ namespace Banico
         {
             string output = name;
             output = output.ToLower();
-            output = output.Replace(" ", "_");
+            output = output.Replace(" ", "-");
             //output = output.Replace("-", "_");
-            output = output.Replace("/", "_");
-            Regex rgx = new Regex("[^a-zA-Z0-9 _-]");
+            output = output.Replace("/", "-");
+            Regex rgx = new Regex("[^a-zA-Z0-9 -]");
             output = rgx.Replace(output, "");
 
             return output;
